@@ -40,9 +40,10 @@ class gtfs(object):
         for (dirpath, dirnames, filenames) in os.walk(self.inputfolder):
             break
         for fname in filenames:
-            self.load_table(
+            if os.path.splitext(fname)[1].lower() == '.txt':
+                self.load_table(
                     os.path.join(dirpath, fname)
-            )
+                )
 
     def load_table(self, file_name):
         """Load GTFS CSV into memoryDB"""
