@@ -9,6 +9,7 @@ logging.basicConfig(
     level=logging.INFO
 )
 
+
 class gtfs(object):
     """Load GTFS data into memory DB"""
     def __init__(self, inputfolder):
@@ -73,7 +74,7 @@ class gtfs(object):
         table_name = os.path.basename(os.path.splitext(file_name)[0])
         sql = "create table {0} ({1})".format(
             table_name,
-            ', '.join([ "{0} text".format(h) for h in headers])
+            ', '.join(["{0} text".format(h) for h in headers])
         )
         self.cursor.execute(sql)
         return(table_name)
@@ -97,12 +98,11 @@ class kml(gtfs):
 
         #: Get data on route
         self.cursor.execute(
-    '''
+            '''
             select * from routes
             inner join trips on routes.route_id = trips.route_id
             where routes.route_id = ?
-    '''
-            , [route_id, ])
+            ''', [route_id, ])
         route_data = self.cursor.fetchone()
         shape_id = route_data[-1]
 
@@ -141,8 +141,8 @@ class kml(gtfs):
         coordinates = etree.Element("coordinates")
         output = ""
         for row in self.cursor.execute(
-                'select shape_pt_lon, shape_pt_lat from shapes where shape_id = ?',
-                [shape_id, ]
+            'select shape_pt_lon, shape_pt_lat from shapes where shape_id = ?',
+            [shape_id, ]
         ):
             output = output + "{0},{1},0\n".format(row[0], row[1])
         coordinates.text = output
@@ -170,7 +170,7 @@ class kml(gtfs):
             routes.append(row[0])
 
         for route in routes:
-           document.append(self.build_route(route))
+            document.append(self.build_route(route))
 
         with open(output_name, 'w') as f:
             f.write(etree.tostring(kml))
